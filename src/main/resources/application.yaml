@@ -1,0 +1,71 @@
+app:
+  redis:
+    host: ${REDIS_HOST:localhost}
+
+info:
+  app:
+    name: "users-service"
+    description: Service for user management and sso user management
+    version: "@project.version@"
+    env: ${APP_ENVIRONMENT:dev}
+
+server:
+  port: ${SERVER_PORT:8081}
+  forward-headers-strategy: framework
+
+logging:
+  level:
+    com.printrevo.tech.starter.feignclient: debug
+  logstashAddress: ${LOGSTASH_ADDRESS:localhost:50000}
+
+da:
+  openapi:
+    packageName: com.printrevo.tech.userservice
+    authentication-scheme: apikey
+
+security:
+  client:
+    iam-internal: ${IAM_INTERNAL_URL:https://iam.local.printrevo.com}
+    grant-type: client_credentials
+    realm: ${IAM_CLIENT_REALM:dev}
+    client-id: users-service
+    client-secret: ${I_AM_CLIENT_SECRET:XKs22RONFvtWkS0MDgsQKq1YIulm5OFX}
+  pin-authenticator:
+    client-id: pin-client
+    client-secret: ${IAM_PIN_CLIENT_SECRET:1Ms0hVcsSqnjELym5qPcDx0XP739664Q}
+    realm: ${IAM_CLIENT_REALM:dev}
+  pkce:
+    client-id: ${PKCE_PUBLIC_CLIENT:test-pkce}
+
+verification:
+  phone:
+    otp-length: "6"
+    otp-expiry: "3"
+
+providers:
+  notification:
+    api-key: ${NOTIFICATION_API_KEY:}
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_DATABASE:printrevo_users_service}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:64&5RmJl)m£c<9.}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    baselineOnMigrate: true
+    locations: classpath:db/migration
+    schemas: public
+    enabled: true
+    validate-on-migrate: true
+  redis:
+    password: ${REDIS_PASSWORD:}
+
+uris:
+  root:
+    token-service: ${TOKEN_SERVICE_URL:https://token-service.dev.printrevo.com}
+    notification-service: ${NOTIFICATION_SERVICE_URL:https://notification-service.dev.da-ride.com}
+    users-service: ${PR_IAM_USERS_SERVICE_URL:https://accounts.dev.printrevo.com/iam}
